@@ -133,14 +133,17 @@ class AmiiboConverter:
 
         nfc_content = (
             f"Filetype: Flipper NFC device\n"
-            f"Version: 2\n"
-            f"# Nfc device type can be UID, Mifare Ultralight, Mifare Classic, Bank card\n"
+            f"Version: 4\n"
+            f"# Device type can be ISO14443-3A, ISO14443-3B, ISO14443-4A, ISO14443-4B, ISO15693-3, FeliCa, NTAG/Ultralight, Mifare Classic, Mifare Plus, Mifare DESFire, SLIX, ST25TB, EMV\n"
             f"Device type: NTAG215\n"
-            f"# UID, ATQA and SAK are common for all formats\n"
+            f"# UID is common for all formats\n"
             f"UID: {self._get_uid()}\n"
+            f"# ISO14443-3A specific data\n"
             f"ATQA: 44 00\n"
             f"SAK: 00\n"
-            f"# Mifare Ultralight specific data\n"
+            f"# NTAG/Ultralight specific data\n"
+            f"Data format version: 2\n"
+            f"NTAG/Ultralight type: NTAG215\n"
             f"Signature: {('00 ' * 32).strip()}\n"
             f"Mifare version: 00 04 04 02 01 00 11 03\n"
             f"Counter 0: 0\n"
@@ -150,6 +153,8 @@ class AmiiboConverter:
             f"Counter 2: 0\n"
             f"Tearing 2: 00\n"
             f"Pages total: {page_count}\n"
+            f"Pages read: {page_count}\n"
+            f"Failed authentication attempts: 0\n"
             f"{pages}"
         )
 
