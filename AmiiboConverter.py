@@ -154,8 +154,8 @@ class AmiiboConverter:
             f"Tearing 2: 00\n"
             f"Pages total: {page_count}\n"
             f"Pages read: {page_count}\n"
-            f"Failed authentication attempts: 0\n"
-            f"{pages}"
+            f"{pages}\n"
+            f"Failed authentication attempts: 0"
         )
 
         return nfc_content
