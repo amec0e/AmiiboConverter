@@ -135,7 +135,7 @@ class AmiiboConverter:
             f"Filetype: Flipper NFC device\n"
             f"Version: 4\n"
             f"# Device type can be ISO14443-3A, ISO14443-3B, ISO14443-4A, ISO14443-4B, ISO15693-3, FeliCa, NTAG/Ultralight, Mifare Classic, Mifare Plus, Mifare DESFire, SLIX, ST25TB, EMV\n"
-            f"Device type: NTAG215\n"
+            f"Device type: NTAG/Ultralight\n"
             f"# UID is common for all formats\n"
             f"UID: {self._get_uid()}\n"
             f"# ISO14443-3A specific data\n"
