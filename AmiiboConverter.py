@@ -139,7 +139,7 @@ class AmiiboConverter:
             f"# UID is common for all formats\n"
             f"UID: {self._get_uid()}\n"
             f"# ISO14443-3A specific data\n"
-            f"ATQA: 44 00\n"
+            f"ATQA: 00 44\n"
             f"SAK: 00\n"
             f"# NTAG/Ultralight specific data\n"
             f"Data format version: 2\n"
