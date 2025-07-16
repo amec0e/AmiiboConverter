@@ -48,3 +48,7 @@ AmiiboConverter is not affiliated, associated, authorized, endorsed by, or in an
 ## License
 
 AmiiboConverter is released under the GNU General Public License v3.0 License. See the LICENSE file for further details.
+
+## Special Thanks
+
+I would like to thank [@equipter](https://github.com/equipter) for all the help understanding 0x88 in the 4th position of the UID as well as CT anaylsis, BCC0 and BCC1 calculations
