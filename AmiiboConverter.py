@@ -217,16 +217,48 @@ class AmiiboConverter:
         pages[134] = "Page 134: 80 80 00 00"
         return "\n".join(pages), page_count
 
+    def _generate_valid_uid(self) -> bytes:
+        """Generate a UID that passes NTAG215 validation"""
+        max_attempts = 100
+        for attempt in range(max_attempts):
+            # Generate 7-byte UID
+            uid = bytes([4] + [random.randint(0, 255) for _ in range(6)])
+            
+            # Check if UID is valid (avoid 0x88 in 4th position)
+            if self._is_uid_valid(uid):
+                return uid
+        
+        # Fallback to a known good pattern if all attempts fail
+        return bytes([4, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC])
+
+    def _is_uid_valid(self, uid: bytes) -> bool:
+        """Check if UID follows valid NTAG215 patterns"""
+        # Avoid 0x88 in 4th position of UID (first byte of Page 1)
+        # UID positions: [1st 2nd 3rd 4th 5th 6th 7th]
+        # Array indices:  [0   1   2   3   4   5   6 ]
+        if uid[3] == 0x88:  # 4th position causes NTAG215 recognition failure
+            return False
+        
+        # Avoid all-zero or all-FF patterns (except first byte)
+        if uid[1:] == b'\x00' * 6 or uid[1:] == b'\xFF' * 6:
+            return False
+        
+        # Avoid sequential patterns that might cause issues
+        if all(uid[i] == uid[i-1] + 1 for i in range(2, 7)):
+            return False
+        
+        return True
+
     def _randomize_uid(self) -> bool:
         """
-        Changes the UID in the byte values
+        Changes the UID in the byte values to a safe random UID
 
         :return: Bool on success
         """
         if not self.master_keys:
             logging.warning("Missing decryption keys!")
             return False
-        new_uid = bytes([4] + [random.randint(0, 255) for _ in range(6)])
+        new_uid = self._generate_valid_uid()
         dump = AmiiboDump(self.master_keys, self.byte_data)
         dump.unlock()
         dump.uid_bin = new_uid
@@ -236,7 +268,7 @@ class AmiiboConverter:
 
     def _build_fresh(self, amiiboid: bytearray) -> bytes:
         """
-        Generates a new Amiibo out of (almost) thin air!
+        Generates a new Amiibo out of (almost) thin air with a safe UID!
         Requires decryption keys available in the same folder as the script
 
         :param amiiboid: bytearray containing the ID of the Amiibo to make
@@ -247,7 +279,7 @@ class AmiiboConverter:
             return False
         dump = AmiiboDump(self.master_keys, bytes(540))
         dump.is_locked = False
-        dump.uid_bin = bytes([4] + [random.randint(0, 255) for _ in range(6)])
+        dump.uid_bin = self._generate_valid_uid()
         dump.data[0x009:0x011] = bytearray.fromhex("480fe0f110ffeea5")
         dump.data[0x054:0x05C] = amiiboid
         dump.data[0x208:] = bytearray.fromhex(
@@ -282,7 +314,7 @@ class AmiiboConverter:
     def _build_from_amiiboid(self, amiiboid: str) -> bytes:
         """
         Prepares the data and runs self._build_fresh
-        Generates a new Amiibo out of (almost) thin air!
+        Generates a new Amiibo out of (almost) thin air with a safe UID!
         Requires decryption keys available in the same folder as the script
 
         :param amiiboid: string with the ID of the Amiibo you want
